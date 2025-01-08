@@ -1,0 +1,42 @@
+### model
+model_name_or_path: "meta-llama/Llama-3.2-1B-Instruct"
+
+### method
+stage: dpo
+do_train: true
+finetuning_type: full
+deepspeed: examples/deepspeed/ds_z3_config.json
+
+### dataset
+dataset: ultrafeedback_binarized
+template: llama3
+cutoff_len: 1024
+max_samples: 12288
+preprocessing_num_workers: 16
+mix_strategy: concat
+streaming: False
+
+### output
+output_dir: saves/llama-1b/normal
+logging_steps: 1
+save_strategy: "epoch"
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: true
+
+### train
+per_device_train_batch_size: 8 #4
+gradient_accumulation_steps: 2 #4
+learning_rate: 2.0e-7
+num_train_epochs: 3
+lr_scheduler_type: cosine
+warmup_ratio: 0.05 #0.1q
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: False
+
+### eval
+val_size: 64 #0.1
+per_device_eval_batch_size: 4
+eval_strategy: steps
+eval_steps: 50000
