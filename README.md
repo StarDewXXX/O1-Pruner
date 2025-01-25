@@ -1,6 +1,6 @@
 # O1-Pruner
 Official repository for paper: O1-Pruner: Length-Harmonizing Fine-Tuning for O1-Like Reasoning Pruning
-
+# [we plan to release the code, checkpoints in Feb 2nd, 2025]
 <img src="image/pipeline.png"></img>
 
 # Abstract
