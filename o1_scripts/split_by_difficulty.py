@@ -45,12 +45,10 @@ def divide_data_by_difficulty(data, K):
             "acc": acc
         })
 
-    # 按 acc 排序
     problem_infos = sorted(problem_infos, key=lambda x: x["acc"])
     print(problem_infos[0]['acc'])
     print(problem_infos[-1]['acc'])
 
-    # 划分子集 (按比例索引)
     num_problems = len(problem_infos)
     subsets = {
         "subset_0_40": problem_infos[: int(0.4 * num_problems)],
@@ -66,7 +64,6 @@ def divide_data_by_difficulty(data, K):
     return flattened_subsets
 
 
-# 保存划分后的数据
 def save_subsets(subsets, output_dir):
     os.makedirs(output_dir, exist_ok=True)
     for subset_name, problems in subsets.items():
@@ -81,7 +78,7 @@ def parse_args():
     parser.add_argument("--file_name", type=str, default="None")
     parser.add_argument("--dataset_type", type=str, default="sft")
     return parser.parse_args()
-# 主流程
+
 def main():
     
 

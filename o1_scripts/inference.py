@@ -28,29 +28,6 @@ import os
 import sys
 import re
      
-
-
-def find_all_equivalence_classes(objects, equivalence_func):
-    # 字典用来记录等价类代表元素和等价类的所有元素
-    equivalence_classes = {}
-
-    for obj in objects:
-        found_class = False
-        for rep in equivalence_classes.keys():
-            # 判断当前对象是否和已有代表元素等价
-            if equivalence_func(obj, rep):
-                equivalence_classes[rep].append(obj)
-                found_class = True
-                break
-        # 如果没有找到等价的代表元素，则将当前对象作为新的等价类的代表
-        if not found_class:
-            equivalence_classes[obj] = [obj]
-
-    # 按等价类大小排序输出
-    sorted_classes = sorted(equivalence_classes.values(), key=len, reverse=True)
-    return sorted_classes
-
-
 def prepare_prompts_for_solution(question, model, speed=None):
     
     if speed == None:
