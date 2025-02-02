@@ -4,15 +4,14 @@ model_name_or_path: Qwen/QwQ-32B-Preview
 stage: wsft
 do_train: true
 # finetuning_type: full #lora
-# lora_target: all
 finetuning_type: freeze
-freeze_trainable_layers: 36 #24
+freeze_trainable_layers: 48 #24
 freeze_trainable_modules: all
 deepspeed: examples/deepspeed/ds_z3_config.json
 # use_adam_mini: true
 
 ### dataset
-dataset: QwQ-iter0-MATH-train-K-12-loft-alpha-2
+dataset: QwQ-iter0-MATH-train-K-16-loft-alpha-5-k-2
 template: qwen
 cutoff_len: 4096
 max_samples: 10000 #10000 #10000
@@ -21,7 +20,7 @@ preprocessing_num_workers: 16
 packing: false
 
 ### output
-output_dir: ../SimpleO1/saves/math/QwQ-loft-iter0-alpha_2-lb_-1
+output_dir: ../SimpleO1/saves/math/QwQ-loft-iter0-alpha_5
 logging_steps: 2
 save_strategy: "no"
 plot_loss: true
@@ -30,8 +29,8 @@ save_only_model: true
 
 ### train
 per_device_train_batch_size: 1 #2
-gradient_accumulation_steps: 8 #4
-learning_rate: 2.0e-6 #1.0e-4
+gradient_accumulation_steps: 4 #4
+learning_rate: 1.0e-6 #1.0e-4
 num_train_epochs: 1.0
 lr_scheduler_type: cosine
 warmup_ratio: 0.1

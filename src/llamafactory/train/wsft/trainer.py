@@ -59,7 +59,8 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
 
         super().__init__(**kwargs)
         self.finetuning_args = finetuning_args
-
+        self.batch_logp_getter =  get_batch_logps
+        self.gating_threshold = 100 #0.99
         ##############################################################################
         self.ref_model = ref_model
         if ref_model is not None:
@@ -145,7 +146,7 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
         # input_batch = 
         # print("list(batch.keys()): in forward():",list(batch.keys()))
         all_logits: "torch.Tensor" = model(batch['input_ids'], batch['attention_mask'], return_dict=True, use_cache=False).logits.to(torch.float32)
-        all_logps, valid_length = get_batch_logps(logits=all_logits, labels=batch["labels"])
+        all_logps, valid_length = self.batch_logp_getter(logits=all_logits, labels=batch["labels"])
 
         return all_logps, valid_length
 
@@ -159,7 +160,8 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
 
         with torch.no_grad(), ref_context:
             all_logits: "torch.Tensor" = ref_model(batch['input_ids'], batch['attention_mask'], return_dict=True, use_cache=False).logits.to(torch.float32)
-            all_ref_logps, valid_length = get_batch_logps(logits=all_logits, labels=batch["labels"])
+            all_ref_logps, valid_length = self.batch_logp_getter(logits=all_logits, labels=batch["labels"])
+
 
         return all_ref_logps, valid_length
 
@@ -187,16 +189,6 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
                                             1.0 + cliprange)
 
         loss = torch.mean(torch.max(pg_loss1, pg_loss2))
-
-        # loss = - torch.mean(inputs['weight'] * (all_logps/valid_length) )
-        # loss = - torch.mean(importance_sampling_weight * inputs['weight'] * (all_logps/valid_length) )
-        # print(f"all_logps:{all_logps}, all_ref_logps:{all_ref_logps}")
-        
-        
-
-        # print(f"inputs['weight']:{inputs['weight']}",)
-        
-        # loss = super().compute_loss(model, inputs, return_outputs, **kwargs)
 
         if is_transformers_version_equal_to_4_46() and not getattr(self, "model_accepts_loss_kwargs", False):
             # other model should not scale the loss
