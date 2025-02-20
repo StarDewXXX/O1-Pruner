@@ -8,7 +8,7 @@ deepspeed: examples/deepspeed/ds_z3_config.json
 use_adam_mini: true
 
 ### dataset
-dataset: Marco-iter0-MATH-train-K-16-loft-alpha-5-k-2
+dataset: ...(dataset generated)
 template: qwen
 cutoff_len: 3072
 max_samples: 10000
@@ -17,7 +17,7 @@ preprocessing_num_workers: 16
 packing: false
 
 ### output
-output_dir: ../SimpleO1/saves/math/Marco-loft-iter0-alpha_5-ppo-normed
+output_dir: ../SimpleO1/saves/math/Marco-7B-Pruned
 logging_steps: 2
 save_strategy: "no"
 plot_loss: true
@@ -28,7 +28,7 @@ save_only_model: true
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 8
 learning_rate: 2.0e-7
-num_train_epochs: 1.0
+num_train_epochs: 1.0 # 2.0
 lr_scheduler_type: cosine
 warmup_ratio: 0.1
 bf16: true
