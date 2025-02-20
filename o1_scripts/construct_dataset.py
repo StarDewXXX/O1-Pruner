@@ -49,7 +49,7 @@ file_name = args.file_name
 input_path =  f"./data/model_generated/{file_name}.json"
 
 K = args.K
-data = json.load(open(input_path,"r"))[0:20]
+data = json.load(open(input_path,"r"))
 print("num data:",len(data))
 
 def generate_pruning_dataset(data):
