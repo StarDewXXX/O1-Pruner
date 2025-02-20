@@ -17,7 +17,7 @@ In this paper, we experimentally demonstrate that long-thought reasoning models 
 <img src="image/pipeline.png"></img>
 
 ## Usage
-We use A800-80G GPUs for inference and training.
+We use A800-80G GPUs for inference and training. For the 7B model, 4 GPUs are required; for the 32B model, 8 GPUs are required.
 ### Installation
 Firstly you should create a venv using conda
 ```bash
