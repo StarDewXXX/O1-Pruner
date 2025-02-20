@@ -42,7 +42,7 @@ def prepare_prompts_for_solution(question, model, speed=None):
     if speed == "slow":
         speed_prompt = "\nThis problem is hard. So you need to think rigorously and do more verifications and checks until you are absolutely confident about your answer."
 
-    if model == "Marco" or "Marco" in model:
+    if model == "marco" or "marco" in model.lower():
         prompt = [
                 {"role": "system", "content": f"You are a helpful assistant. You should think step-by-step and put your final answer within \\boxed{{}}.",},
                 {"role":"user","content":f"Solve the problem: {question}{speed_prompt}"},
@@ -50,7 +50,7 @@ def prepare_prompts_for_solution(question, model, speed=None):
 
         return prompt
 
-    if "QwQ" in model or "Qwen" in model:
+    if "qwq" in model or "qwen" in model.lower():
 
         prompt = [
                 {"role": "system", "content": f"You are a helpful and harmless assistant. You are Qwen developed by Alibaba. You should think step-by-step and put your final answer within \\boxed{{}}.",},
@@ -59,27 +59,17 @@ def prepare_prompts_for_solution(question, model, speed=None):
             
         return prompt
 
-    if model == "LLAMA70B" or model == "LLAMA8B":
-        prompt = [
-            {"role": "system", "content": f"You are a helpful and harmless assistant. You should think step-by-step and put your final answer within \\boxed{{}}.",},
-            {"role":"user","content":f'''Please think step-by-step and put your final answer within \\boxed{{}}.\nQuestion:{question}{speed_prompt}'''},
-        ]
-        return prompt
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_samples", type=int, default=500)
     parser.add_argument("--K", type=int, default=64)  # model path
     parser.add_argument("--dataset", type=str, default='math_train_hard')  # data path
-    parser.add_argument("--model", type=str, default="QwQ")  # output dir
+    parser.add_argument("--model_name", type=str, default="QwQ")  # output dir
     parser.add_argument("--model_path", type=str, default="")
     parser.add_argument("--speed", type=str, default="normal")
     parser.add_argument("--n_gpus", type=int, default=4)
     parser.add_argument("--save_output", type=bool, default=True)
-    parser.add_argument("--max_tokens", type=int, default=8192)
-    
-    parser.add_argument("--shuffle", type=bool, default=False)
-    
+    parser.add_argument("--max_tokens", type=int, default=8192)    
     
     return parser.parse_args()
 
@@ -96,7 +86,7 @@ dataset_paths = {
 args = parse_args()
 speed = args.speed
 K = args.K
-model = args.model
+model = args.model_name
 dataset = args.dataset
 num_samples = args.num_samples
 n_gpus = args.n_gpus
@@ -104,7 +94,6 @@ max_tokens = args.max_tokens
 input_path = dataset_paths[dataset]
 model_path = args.model_path
 save_output = args.save_output
-shuffle = args.shuffle
 
 print("INFERENCE:",K,model,dataset,"num:",num_samples)
 llm = LLM(model=model_path,tensor_parallel_size=n_gpus,dtype="bfloat16")
@@ -129,9 +118,6 @@ data = data[0:num_samples]
 print("used num problem:",len(data))
 initial_data = [copy.deepcopy(item) for item in data]
 data = [copy.deepcopy(item) for item in data for _ in range(K)]
-if shuffle:
-    print("[WARNING] Total Shuffled, This is only used for time evaluation")
-    random.shuffle(data)
 
 prompts = [prepare_prompts_for_solution(item['problem'], model, speed=speed) for item in data]
 prompts = tokenizer.apply_chat_template(prompts,add_generation_prompt=True,tokenize=False)
@@ -156,8 +142,8 @@ for i in range(len(data)):
     count += 1
 
     item['solution'] = output_solutions[i]
-
     item['answer'] = answer
+    
     results.append(item)
 
 print(results[0])

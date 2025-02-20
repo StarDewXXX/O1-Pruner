@@ -34,33 +34,23 @@ def format_data(item):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--K", type=int, default=16)  # model path
-    parser.add_argument("--model", type=str, default="QwQ")  # output dir
-    parser.add_argument("--model_id", type=str, default="")
-    parser.add_argument("--file_name", type=str, default="None")
-    parser.add_argument("--dataset_type", type=str, default="sft")
+    parser.add_argument("--model_path", type=str, default="Qwen/QwQ-32B-Preview")  # output dir
+    parser.add_argument("--model_name", type=str, default="QwQ")
+    parser.add_argument("--file_name", type=str, default="")
+    parser.add_argument("--alpha", type=str, default="None")
     return parser.parse_args()
 
-model_names = {
-    "QwQ": "Qwen/QwQ-32B-Preview",
-    "Qwen7B": "Qwen/Qwen2.5-Math-7B-Instruct",
-    "LLAMA70B": "meta-llama/Llama-3.1-70B-Instruct",
-    "LLAMA8B": "meta-llama/Llama-3.1-8B-Instruct",
-    "Marco":"AIDC-AI/Marco-o1"
-}
-
 args = parse_args()
-model = args.model
-model_path = model_names[model]
+model_name = args.model_name
+model_path = args.model_path
 tokenizer = AutoTokenizer.from_pretrained(model_path)
-
+alpha = args.alpha
 file_name = args.file_name
 input_path =  f"./data/model_generated/{file_name}.json"
-model_id = args.model_id
-if len(model_id) == 0:
-    model_id = model
+
 K = args.K
 dataset_type = args.dataset_type
-K_values = [K]
+
 data = json.load(open(input_path,"r"))
 print("num data:",len(data))
 
@@ -70,19 +60,9 @@ def generate_pruning_dataset(data):
         return len(tokenizer(solution)['input_ids'])
     num_problems = len(data) // K
 
-    output_infos = []
-
     selected_items = []
 
-    solvable = 0
-    correct = 0
-    high_conf = 0
-    correct_high_conf = 0
-    total_tokens = 0
-    total_min_tokens = 0
-
     used_count_per_problem = 2
-    alpha = 3 #5
 
     lower_bound = -2
     upper_bound = 4
@@ -105,16 +85,18 @@ def generate_pruning_dataset(data):
         avg_length = sum([get_token_length(solution) for solution in solutions]) / len(solutions)
         avg_acc = sum([int(c) for c in correctness]) / len(correctness)
 
-        for index in range(0, count_per_problem):#random.sample(range(0, len(solutions)), count_per_problem):
+        for index in range(0, used_count_per_problem):
             solution = solutions[index]
             length = get_token_length(solution)
             length_term = (avg_length - length) / length
             acc_term = alpha * (int(correctness[index]) - avg_acc)
             weight = length_term + acc_term
+
             if weight <= lower_bound:
                 weight = lower_bound
             if weight > upper_bound:
                 weight = upper_bound
+
             print(f"length:{length} acc:{correctness[index]}, avg_length:{avg_length} avg_acc:{avg_acc}, weight:{weight}")
             selected_items.append(
                 {
@@ -129,7 +111,7 @@ def generate_pruning_dataset(data):
     std_weight = np.std(weights)
 
     for item in selected_items:
-        unnormlized_weight = item["weight"]
+        # unnormlized_weight = item["weight"]
         item["weight"] = (item["weight"] - mean_weight) / std_weight
     
     print("mean_weight:",mean_weight)
@@ -138,7 +120,7 @@ def generate_pruning_dataset(data):
 
     dataset_data = [format_data(item) for item in selected_items]
 
-    save_dir = f"../LLaMA-Factory/data/my_dataset/{model_id}-iter0-MATH-train-K-{K}-loft-alpha-{alpha}-k-{used_count_per_problem}"
+    save_dir = f"/data/my_dataset/{model_name}-iter0-MATH-train-K-{K}-loft-alpha-{alpha}-k-{used_count_per_problem}"
     os.makedirs(save_dir, exist_ok=True)
     filename = f"{save_dir}/raw.json"
     with open(filename,"w") as f:
