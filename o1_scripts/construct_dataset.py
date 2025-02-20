@@ -3,7 +3,7 @@ import json
 from transformers import AutoTokenizer
 from tqdm import tqdm
 import random
-from utils import extract_answer, get_example
+from utils import extract_answer
 from grader import grade_answer
 from collections import defaultdict
 from datasets import load_dataset
@@ -37,7 +37,7 @@ def parse_args():
     parser.add_argument("--model_path", type=str, default="Qwen/QwQ-32B-Preview")  # output dir
     parser.add_argument("--model_name", type=str, default="QwQ")
     parser.add_argument("--file_name", type=str, default="")
-    parser.add_argument("--alpha", type=str, default="None")
+    parser.add_argument("--alpha", type=int, default="None")
     return parser.parse_args()
 
 args = parse_args()
@@ -49,9 +49,7 @@ file_name = args.file_name
 input_path =  f"./data/model_generated/{file_name}.json"
 
 K = args.K
-dataset_type = args.dataset_type
-
-data = json.load(open(input_path,"r"))
+data = json.load(open(input_path,"r"))[0:20]
 print("num data:",len(data))
 
 def generate_pruning_dataset(data):
@@ -120,7 +118,7 @@ def generate_pruning_dataset(data):
 
     dataset_data = [format_data(item) for item in selected_items]
 
-    save_dir = f"/data/my_dataset/{model_name}-iter0-MATH-train-K-{K}-loft-alpha-{alpha}-k-{used_count_per_problem}"
+    save_dir = f"data/my_dataset/{model_name}-train-K-{K}-alpha-{alpha}-k-{used_count_per_problem}"
     os.makedirs(save_dir, exist_ok=True)
     filename = f"{save_dir}/raw.json"
     with open(filename,"w") as f:

@@ -1,6 +1,6 @@
 {
-    "Marco-iter0-MATH-train-K-16-loft-alpha-5-k-2": {
-        "file_name": "my_dataset/Marco-iter0-MATH-train-K-16-loft-alpha-5-k-2",
+    "Marco-train-K-16-alpha-2-k-2": {
+        "file_name": "my_dataset/Marco-train-K-16-alpha-2-k-2",
         "formatting": "sharegpt",
         "columns": {
             "messages": "messages",
@@ -14,8 +14,8 @@
             "system_tag": "system"
         }
     },
-    "QwQ-iter0-MATH-train-K-16-loft-alpha-5-k-2": {
-        "file_name": "my_dataset/QwQ-iter0-MATH-train-K-16-loft-alpha-5-k-2",
+    "QwQ-train-K-12-alpha-5-k-2": {
+        "file_name": "my_dataset/QwQ-train-K-12-alpha-5-k-2",
         "formatting": "sharegpt",
         "columns": {
             "messages": "messages",

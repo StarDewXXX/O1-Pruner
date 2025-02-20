@@ -8,7 +8,7 @@ deepspeed: examples/deepspeed/ds_z3_config.json
 use_adam_mini: true
 
 ### dataset
-dataset: ...(dataset generated)
+dataset: Marco-train-K-16-alpha-2-k-2
 template: qwen
 cutoff_len: 3072
 max_samples: 10000

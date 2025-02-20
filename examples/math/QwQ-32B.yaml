@@ -9,7 +9,7 @@ freeze_trainable_modules: all
 deepspeed: examples/deepspeed/ds_z3_config.json
 
 ### dataset
-dataset: ...(dataset generated)
+dataset: QwQ-train-K-12-alpha-5-k-2
 template: qwen
 cutoff_len: 4096
 max_samples: 10000
