@@ -35,7 +35,7 @@ git clone https://github.com/StarDewXXX/O1-Pruner
 cd O1-Pruner
 pip install -e .
 ```
-Our project uses llamafactory for training and vllm for generation. During our experiments, we encountered version conflict issues. To avoid potential conflicts, we recommend installing vllm in a separate environment.
+Our project uses llamafactory (a modified version for our algorithm) for training and vllm for generation. During our experiments, we encountered version conflict issues. To avoid potential conflicts, we recommend installing vllm in a separate environment.
 ```bash
 conda create -n vllm python==3.11.9
 conda activate vllm
